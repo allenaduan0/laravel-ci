@@ -49,5 +49,5 @@ jobs:
         run: php artisan test --testsuite=Feature
 
       # 8️⃣ Build frontend assets
-      - name: Build assets
-        run: npm run dev
+      - name: Build assets for production
+        run: npm run build
