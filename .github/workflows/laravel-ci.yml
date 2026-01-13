@@ -1,5 +1,6 @@
 name: Laravel CI/CD
 
+# Trigger workflow on push or PR to main
 on:
   push:
     branches: [main]
@@ -11,27 +12,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code from GitHub
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2️⃣ Set up PHP
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
 
-      - name: Install PHP dependencies
+      # 3️⃣ Install PHP dependencies
+      - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      # 4️⃣ Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
+      # 5️⃣ Install JS dependencies
       - name: Install JS dependencies
         run: npm install
 
+      # 6️⃣ Prepare Laravel environment
+      - name: Set up environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --show | xargs -I {} echo "APP_KEY={}" >> .env
+
+      # 7️⃣ Run Laravel tests
       - name: Run tests
         run: php artisan test
 
-      - name: Build frontend assets
+      # 8️⃣ Build frontend assets
+      - name: Build assets
         run: npm run dev
